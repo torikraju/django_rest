@@ -1,6 +1,6 @@
 from rest_framework.generics import (
     ListAPIView,
-    CreateAPIView, RetrieveAPIView)
+    CreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView, DestroyAPIView)
 
 from .serializers import StatusSerializer, Status
 
@@ -26,26 +26,25 @@ class StatusCreateAPIView(CreateAPIView):
 
 
 class DetailAPIView(RetrieveAPIView):
-    # queryset = Status.objects.all()
+    queryset = Status.objects.all()
     serializer_class = StatusSerializer
-    lookup_field = 'id'
+    # lookup_field = 'id'
 
     # def get_object(self):
     #     print(self.kwargs)
     #     return Status.objects.get(id=2)
 
-#
-#
-# class UserDeleteAPIView(DestroyAPIView):
-#     queryset = User.objects.all()
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = UserSerializer
-#
-#
-# class UpdateAPIView(RetrieveUpdateAPIView):
-#     # permission_classes = [IsAuthenticatedOrReadOnly]
-#     queryset = Status.objects.all()
-#     serializer_class = Status
-#
-#     def perform_update(self, serializer):
-#         serializer.save(user=self.request.user)
+
+class StatusDeleteAPIView(DestroyAPIView):
+    queryset = Status.objects.all()
+    # permission_classes = [IsAuthenticated]
+    serializer_class = StatusSerializer
+
+
+class StatusUpdateAPIView(RetrieveUpdateAPIView):
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
