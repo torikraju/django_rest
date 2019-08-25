@@ -1,3 +1,4 @@
+from rest_framework import mixins
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView, DestroyAPIView)
@@ -5,7 +6,7 @@ from rest_framework.generics import (
 from .serializers import StatusSerializer, Status
 
 
-class StatusListAPIView(ListAPIView):
+class StatusListAPIView(mixins.CreateModelMixin, ListAPIView):
     serializer_class = StatusSerializer
 
     def get_queryset(self):
@@ -14,6 +15,9 @@ class StatusListAPIView(ListAPIView):
         if query is not None:
             qs = qs.filter(content__icontains=query)
         return qs
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class StatusCreateAPIView(CreateAPIView):
@@ -25,14 +29,21 @@ class StatusCreateAPIView(CreateAPIView):
     #     serializer.save(user=self.request.user)
 
 
-class DetailAPIView(RetrieveAPIView):
+class DetailAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, RetrieveAPIView):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+
     # lookup_field = 'id'
 
     # def get_object(self):
     #     print(self.kwargs)
     #     return Status.objects.get(id=2)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class StatusDeleteAPIView(DestroyAPIView):

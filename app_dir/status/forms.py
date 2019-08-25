@@ -8,6 +8,7 @@ class StatusForm(forms.ModelForm):
         model = Status
         fields = [
             'user',
+            'image',
             'content',
         ]
 

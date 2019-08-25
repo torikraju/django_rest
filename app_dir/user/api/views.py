@@ -1,10 +1,11 @@
+from django.db.models import Q
+from rest_framework import pagination
 from rest_framework.generics import (
     ListAPIView, CreateAPIView, RetrieveUpdateAPIView,
     RetrieveAPIView, DestroyAPIView
 )
-from django.db.models import Q
-from rest_framework import pagination
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly, IsAuthenticated)
+
 from .serializers import UserSerializer, User
 from ...core.pagination import PostLimitOffsetPagination
 

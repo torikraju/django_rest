@@ -70,6 +70,8 @@ update-env.py
 */migrations/*
 !*/migrations/__init__.py
 
+static_cdn/*
+
 
 
 
