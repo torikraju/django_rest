@@ -6,7 +6,13 @@ from app_dir.status.models import Status
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Status
-        fields = '__all__'
+        fields = [
+            'id',
+            'user',
+            'content',
+            'image',
+        ]
+        read_only_fields = ['user']
 
     def validate_content(self, attrs):
         if len(attrs) < 10:

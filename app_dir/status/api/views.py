@@ -1,16 +1,20 @@
-from rest_framework import mixins
+from rest_framework import mixins, permissions
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView, DestroyAPIView)
+from rest_framework.authentication import SessionAuthentication
 
 from .serializers import StatusSerializer, Status
 
 
 class StatusListAPIView(mixins.CreateModelMixin, ListAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    authentication_classes = [SessionAuthentication]
     serializer_class = StatusSerializer
 
     def get_queryset(self):
         qs = Status.objects.all()
+        print(self.request.user)
         query = self.request.GET.get('q')
         if query is not None:
             qs = qs.filter(content__icontains=query)
@@ -18,6 +22,9 @@ class StatusListAPIView(mixins.CreateModelMixin, ListAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class StatusCreateAPIView(CreateAPIView):

@@ -21,3 +21,4 @@ six==1.10.0
 text-unidecode==1.2
 urllib3==1.23
 Pillow
+mysqlclient
