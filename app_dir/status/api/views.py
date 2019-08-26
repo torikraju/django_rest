@@ -8,8 +8,8 @@ from .serializers import StatusSerializer, Status
 
 
 class StatusListAPIView(mixins.CreateModelMixin, ListAPIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    authentication_classes = [SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [SessionAuthentication]
     serializer_class = StatusSerializer
 
     def get_queryset(self):
