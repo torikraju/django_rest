@@ -7,8 +7,10 @@ class StatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Status
         fields = '__all__'
+        read_only_fields = ['user']
 
-    def validate_content(self, attrs):
+    @staticmethod
+    def validate_content(attrs):
         if len(attrs) < 10:
             raise serializers.ValidationError('Too Small')
         return attrs
