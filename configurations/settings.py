@@ -45,6 +45,7 @@ LOCAL_APPS = (
     'app_dir.user',
     'app_dir.module',
     'app_dir.status',
+    'app_dir.accounts'
 )
 
 INSTALLED_APPS = DEFAULT_APPS + EXTERNAL_APPS + LOCAL_APPS
@@ -143,5 +144,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "static_cdn", "media_root")
 # }
 
 from configurations.rest_conf.main import *
-
-
