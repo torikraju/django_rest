@@ -4,6 +4,7 @@ from rest_framework.generics import (
     CreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView, DestroyAPIView)
 
 from .serializers import StatusSerializer, Status
+from app_dir.accounts.api.permissions import IsOwnerOrReadOnly
 
 
 class StatusListAPIView(mixins.CreateModelMixin, ListAPIView):
@@ -32,6 +33,7 @@ class StatusCreateAPIView(CreateAPIView):
 class DetailAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, RetrieveAPIView):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+    permission_classes = [IsOwnerOrReadOnly]
 
     # lookup_field = 'id'
 
@@ -48,7 +50,7 @@ class DetailAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, RetrieveA
 
 class StatusDeleteAPIView(DestroyAPIView):
     queryset = Status.objects.all()
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly]
     serializer_class = StatusSerializer
 
 

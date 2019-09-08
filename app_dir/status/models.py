@@ -19,3 +19,7 @@ class Status(models.Model):
     class Meta:
         verbose_name = 'Status Post'
         verbose_name_plural = 'Status Post'
+
+    @property
+    def owner(self):
+        return self.user
