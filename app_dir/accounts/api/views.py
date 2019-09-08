@@ -35,3 +35,33 @@ class AuthView(APIView):
                 response = jwt_response_payload_handler(token, user, request=request)
                 return Response(response)
         return Response({'details': 'Invalid username or password'}, status=401)
+
+
+class RegisterView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return Response({'details': 'You are already registered'})
+        data = self.request.data
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        password2 = data.get('password2')
+        qs = User.objects.filter(
+            Q(username__iexact=username) |
+            Q(email__iexact=email)
+        )
+        if password != password2:
+            return Response({'details': "Your password didn't match"}, status=422)
+
+        if qs.exists():
+            return Response({'details': 'You are already registered'}, status=422)
+        else:
+            user = User.objects.create(username=username, email=email)
+            user.set_password(password)
+            user.save()
+            payload = jwt_payload_handler(user)
+            token = jwt_encode_handler(payload)
+            response = jwt_response_payload_handler(token, user, request=request)
+            return Response(response)
