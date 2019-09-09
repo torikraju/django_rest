@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 from django.utils import timezone
 from datetime import timedelta
+from rest_framework.reverse import reverse as api_reverse
 
 from app_dir.status.models import Status
 
@@ -23,22 +24,31 @@ class UserPublicSerializer(serializers.ModelSerializer):
 
 
 class StatusInlineUserSerializer(serializers.ModelSerializer):
+    uri = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Status
         fields = [
             'id',
             'content',
-            'image'
+            'image',
+            'uri'
         ]
+
+    def get_uri(self, obj):
+        request = self.context['request']
+        return api_reverse("status_api:status-details", kwargs={'pk': obj.id}, request=request)
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):
     status_list = serializers.SerializerMethodField(read_only=True)
+    uri = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = [
             'id',
+            'uri',
             'username',
             'email',
             'status_list'
@@ -47,6 +57,10 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     def get_status_list(self, obj):
         qs = obj.status_set.all()
         return StatusInlineUserSerializer(qs, many=True, context=self.context).data
+
+    def get_uri(self, obj):
+        request = self.context['request']
+        return api_reverse("auth_api:user-details", kwargs={'username': obj.username}, request=request)
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
