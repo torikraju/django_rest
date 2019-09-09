@@ -43,6 +43,13 @@ class StatusInlineUserSerializer(serializers.ModelSerializer):
 class UserDetailsSerializer(serializers.ModelSerializer):
     status_list = serializers.SerializerMethodField(read_only=True)
     uri = serializers.SerializerMethodField(read_only=True)
+    statuses = serializers.HyperlinkedRelatedField(
+        many=True,
+        source='status_set', # Status.objects.filter(user=user) if there is no related name use this style
+        read_only=True,
+        lookup_field='pk',
+        view_name='status_api:status-details'
+    )
 
     class Meta:
         model = User
@@ -51,7 +58,8 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             'uri',
             'username',
             'email',
-            'status_list'
+            'status_list',
+            'statuses'
         ]
 
     def get_status_list(self, obj):
