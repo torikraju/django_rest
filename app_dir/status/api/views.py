@@ -1,14 +1,22 @@
-from rest_framework import mixins
+from rest_framework import mixins, pagination
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView, DestroyAPIView)
 
 from .serializers import StatusSerializer, Status
 from app_dir.accounts.api.permissions import IsOwnerOrReadOnly
+from app_dir.core.pagination import PostLimitOffsetPagination
+from rest_framework.response import Response
+
+
+class CustomPagination(pagination.LimitOffsetPagination):
+    default_limit = 2
+    max_limit = 10
 
 
 class StatusListAPIView(mixins.CreateModelMixin, ListAPIView):
     serializer_class = StatusSerializer
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         qs = Status.objects.all()

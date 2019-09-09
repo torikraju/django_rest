@@ -79,7 +79,6 @@ class RegisterAPIView(generics.CreateAPIView):
 
 
 class UserDetailsAPIView(generics.RetrieveAPIView):
-    permission_classes = [permissions.AllowAny]
     serializer_class = UserDetailsSerializer
     queryset = User.objects.filter(is_active=True)
     lookup_field = 'username'
