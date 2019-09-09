@@ -17,6 +17,8 @@ class CustomPagination(pagination.LimitOffsetPagination):
 class StatusListAPIView(mixins.CreateModelMixin, ListAPIView):
     serializer_class = StatusSerializer
     pagination_class = CustomPagination
+    search_fields = ['user__username', 'content']
+    ordering_fields = ['id', 'created_at', 'updated_at']
 
     def get_queryset(self):
         qs = Status.objects.all()
