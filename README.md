@@ -66,5 +66,5 @@ Create Super user
     $ python manage.py runserver
 
 ### Run Tests
-    $ python manage.py test
+    $ python manage.py test -v 2
 

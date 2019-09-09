@@ -20,6 +20,6 @@ class StatusTestCase(TestCase):
             user=user,
             content=faker.paragraphs(nb=3, ext_word_list=None)
         )
-        self.assertEqual(status.id, 1)
+        self.assertEqual(status.user, user)
         qs = Status.objects.all()
-        self.assertEqual(qs.count(), 1)
+        self.assertGreaterEqual(qs.count(), 1)

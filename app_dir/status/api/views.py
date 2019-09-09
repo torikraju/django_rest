@@ -36,8 +36,8 @@ class StatusCreateAPIView(CreateAPIView):
     # permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Status.objects.all()
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class DetailAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, RetrieveAPIView):
