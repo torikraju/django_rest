@@ -6,8 +6,7 @@ from .utils import jwt_response_payload_handler
 from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserRegisterSerializer
-
+from .serializers import UserRegisterSerializer, UserDetailsSerializer
 from .permissions import AnonPermissionOnly
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -74,6 +73,16 @@ class RegisterAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
     permission_classes = [AnonPermissionOnly]
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class UserDetailsAPIView(generics.RetrieveAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = UserDetailsSerializer
+    queryset = User.objects.filter(is_active=True)
+    lookup_field = 'username'
 
     def get_serializer_context(self):
         return {'request': self.request}

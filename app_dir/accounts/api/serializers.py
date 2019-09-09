@@ -5,10 +5,48 @@ from rest_framework_jwt.settings import api_settings
 from django.utils import timezone
 from datetime import timedelta
 
+from app_dir.status.models import Status
+
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 expire_delta = api_settings.JWT_REFRESH_EXPIRATION_DELTA
+
+
+class UserPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+        ]
+
+
+class StatusInlineUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = [
+            'id',
+            'content',
+            'image'
+        ]
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    status_list = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'email',
+            'status_list'
+        ]
+
+    def get_status_list(self, obj):
+        qs = obj.status_set.all()
+        return StatusInlineUserSerializer(qs, many=True, context=self.context).data
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):

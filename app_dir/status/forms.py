@@ -15,3 +15,4 @@ class StatusForm(forms.ModelForm):
     def clean_content(self):
         if len(self.cleaned_data['content']) < 10:
             raise forms.ValidationError('content is too small')
+        return self.cleaned_data['content']
