@@ -1,3 +1,9 @@
+import os
+import tempfile
+from PIL import Image
+import shutil
+from django.conf import settings
+
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse as api_reverse
 from django.test import TestCase
@@ -45,10 +51,10 @@ class StatusAPITestCase(TestCase):
     def get_token(self):
         url = login_api
         response = self.client.post(url, login_data, format='json')
-        return response.data.get('token', None)
+        return response.data.get('token', None), response.data.get('user', None)
 
     def test_status_crud(self):
-        token = self.get_token()
+        token = self.get_token()[0]
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION=f'JWT {token}')
         create = client.post(create_api, content_data, format='json')
@@ -73,7 +79,7 @@ class StatusAPITestCase(TestCase):
 
     def test_status_rud_no_token(self):
         client = APIClient()
-        token = self.get_token()
+        token = self.get_token()[0]
         client.credentials(HTTP_AUTHORIZATION=f'JWT {token}')
         create = client.post(create_api, content_data, format='json')
         self.assertEqual(create.status_code, status.HTTP_201_CREATED)
@@ -88,3 +94,22 @@ class StatusAPITestCase(TestCase):
         '''delete'''
         delete = client.delete(rud_api(id_), format='json')
         self.assertEqual(delete.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_status_create_with_image(self):
+        token, user = self.get_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION=f'JWT {token}')
+        image_item = Image.new('RGB', (800, 1280), (0, 124, 174))
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False)
+        image_item.save(tmp_file, format='JPEG')
+        with open(tmp_file.name, 'rb') as file_obj:
+            data = {
+                'content': faker.sentence(nb_words=20, variable_nb_words=True, ext_word_list=None),
+                'image': file_obj
+
+            }
+            create = client.post(create_api, data, format='multipart')
+            self.assertEqual(create.status_code, status.HTTP_201_CREATED)
+        temp_img_dir = os.path.join(settings.MEDIA_ROOT, 'updates', user)
+        if os.path.exists(temp_img_dir):
+            shutil.rmtree(temp_img_dir)
